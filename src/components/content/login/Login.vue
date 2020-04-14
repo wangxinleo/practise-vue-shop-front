@@ -80,11 +80,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.login{
+.login {
   background-color: #2b4b6b;
   height: 100%;
 }
-  .login-box{
+  .login-box {
     height: 300px;
     width: 450px;
     background-color: #fff;
@@ -94,7 +94,7 @@ export default {
     left: 50%;
     transform: translate(-50%,-50%);
   }
-  .login-head{
+  .login-head {
     width: 130px;
     height: 130px;
     border-radius: 50%;
@@ -105,20 +105,20 @@ export default {
     left: 50%;
     transform: translate(-50%,-50%);
     background-color: #eee;
-    img{
+    > img {
       width: 100%;
       height: 100%;
       border-radius: 50%;
     }
   }
-  .login-form{
+  .login-form {
     position: absolute;
     bottom: 0;
     width: 100%;
     padding: 0 20px;
     box-sizing: border-box;
   }
-  .btns{
+  .btns {
     display: flex;
     justify-content: flex-end;
   }
