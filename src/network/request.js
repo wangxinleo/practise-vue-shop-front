@@ -7,6 +7,8 @@ export function request (config) {
   })
 
   instance.interceptors.request.use((config) => {
+    // 添加验证请求头
+    config.headers.Authorization = window.sessionStorage.getItem('token')
     return config
     // eslint-disable-next-line handle-callback-err
   }, error => {

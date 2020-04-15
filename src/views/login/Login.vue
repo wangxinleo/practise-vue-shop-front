@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { login } from '../../../network/login'
+import { login } from '../../network/login/Login'
 
 export default {
   name: 'Login',
@@ -67,10 +67,10 @@ export default {
     login () {
       login(this.loginForm.username, this.loginForm.password).then((res) => {
         if (res.data.meta.status >= 300) {
-          this.$message.error('登录失败！请验证你的账户密码是否有效！')
+          this.$message.error(res.data.meta.msg)
           return false
         }
-        this.$message.success('登录成功')
+        this.$message.success(res.data.meta.msg)
         window.sessionStorage.setItem('token', res.data.data.token)
         this.$router.push('/home')
       })
