@@ -91,6 +91,8 @@ export default {
         // console.log(res)
         if (res.data.meta.status >= 300) return this.$message.error(res.data.meta.msg)
         this.listData = res.data.data
+      }).catch(err => {
+        console.log(err)
       })
     }
   }

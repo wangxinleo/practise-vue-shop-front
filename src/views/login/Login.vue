@@ -56,7 +56,7 @@ export default {
     // 登录
     loginValidate () {
       this.$refs.loginForm.validate((validate) => {
-        if (!validate) return
+        if (!validate) return false
         this.login()
       })
     },
@@ -73,6 +73,8 @@ export default {
         this.$message.success(res.data.meta.msg)
         window.sessionStorage.setItem('token', res.data.data.token)
         this.$router.push('/home')
+      }).catch(err => {
+        console.log(err)
       })
     }
   }
