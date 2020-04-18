@@ -13,11 +13,13 @@
           <el-table-column prop="email" label="邮箱"></el-table-column>
           <el-table-column prop="mobile" label="电话"></el-table-column>
           <el-table-column prop="role_name" label="角色"></el-table-column>
+<!--          列表状态栏-->
           <el-table-column label="状态">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.mg_state" @change="changeRowStateListen(scope.row)"></el-switch>
             </template>
           </el-table-column>
+<!--          列表操作栏-->
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
               <el-button type="primary" icon="el-icon-edit" size="mini" @click="update(scope.row.id)"></el-button>
@@ -128,6 +130,13 @@ export default {
   },
   created () {
     this.getUsersList()
+    this.$bus.$on('freshClick', () => {
+      console.log(this)
+      this.getUsersList()
+    })
+  },
+  beforeDestroy () {
+    this.$bus.$off('freshClick')
   },
   methods: {
     // 显示多少条
