@@ -11,16 +11,16 @@
       <el-button type="primary" @click="addUserClick">添加用户</el-button>
     </el-col>
     <!--添加用户弹出框-->
-    <add-user-dialog ref="addUserDialog" @addUserCancel = "addUserCancel"></add-user-dialog>
+    <add-user-dialog ref="addUserDialog"></add-user-dialog>
   </el-row>
 </template>
 
 <script>
-import addUserDialog from './addUserDialog'
+import AddUserDialog from './AddUserDialog'
 export default {
   name: 'UsersFunc',
   components: {
-    addUserDialog
+    AddUserDialog
   },
   data () {
     return {
@@ -38,10 +38,6 @@ export default {
     addUserClick () {
       // 调用子组件方法
       this.$refs.addUserDialog.addUserClick()
-    },
-    // 取消添加用户
-    addUserCancel () {
-      this.addUserVisible = false
     }
   }
 }
