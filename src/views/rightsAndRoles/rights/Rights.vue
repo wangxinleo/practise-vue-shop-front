@@ -1,5 +1,5 @@
 <template>
-    <div>权限列表122</div>
+    <div>权限列表123322</div>
 </template>
 
 <script>
