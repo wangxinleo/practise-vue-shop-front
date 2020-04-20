@@ -1,10 +1,12 @@
 <template>
   <div class="rights">
+<!--    面包屑导航-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>权限管理</el-breadcrumb-item>
       <el-breadcrumb-item>权限列表</el-breadcrumb-item>
     </el-breadcrumb>
+<!--    权限列表主体-->
     <el-card>
       <el-table
         :data="tableData" stripe border>
@@ -25,7 +27,7 @@
 </template>
 
 <script>
-import { getRights } from 'network/rightsAndRoles/rights'
+import { getRights } from 'network/rightsAndRoles/RightsAndRoles'
 
 export default {
   name: 'Rights',
