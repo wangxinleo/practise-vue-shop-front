@@ -46,8 +46,8 @@
         <el-table-column prop="roleDesc" label="角色描述"></el-table-column>
         <el-table-column label="操作" width="300px">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+            <el-button type="primary" icon="el-icon-edit" size="mini" @click="updateRoleBtn(scope.row)">编辑</el-button>
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteRoleFromId(scope.row.id)">删除</el-button>
             <el-button type="warning" icon="el-icon-setting" size="mini" @click="clickRightsBtn(scope.row)">分配权限</el-button>
 <!--            <pre>-->
 <!--              {{scope.row.children}}-->
@@ -68,16 +68,31 @@
                node-key="id"
                :default-checked-keys="defaultCheckedKeys"
                show-checkbox default-expand-all></el-tree>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer">
           <el-button @click="updateRightsVisible = false">取 消</el-button>
           <el-button type="primary" @click="updateRights">确 定</el-button>
         </span>
+    </el-dialog>
+<!--    编辑角色信息对话框-->
+    <el-dialog title="编辑角色" :visible.sync="updateRoleVisible" width="60%" @close="updateRoleClose">
+      <el-form :model="updateRoleForm" :rules="updateRoleRules" ref="updateRoleForm" label-width="80px">
+        <el-form-item label="角色名" prop="roleName">
+          <el-input v-model="updateRoleForm.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="updateRoleForm.roleDesc"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="updateRoleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="updateRole">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getRights, getRoles, deleteRightFromRoleIdRightId, updateRightsNet } from '../../../network/rightsAndRoles/RightsAndRoles'
+import { getRights, getRoles, deleteRightFromRoleIdRightId, updateRightsNet, deleteRoleFromId, updateRoleFromId } from '../../../network/rightsAndRoles/RightsAndRoles'
 
 export default {
   name: 'Roles',
@@ -97,7 +112,17 @@ export default {
       // 当前角色已有的权限
       defaultCheckedKeys: [],
       // 当前操作角色
-      defaultCheckedRole: 0
+      defaultCheckedRole: 0,
+      // 编辑角色弹出框
+      updateRoleVisible: false,
+      updateRoleForm: {
+        id: '',
+        roleName: '',
+        roleDesc: ''
+      },
+      updateRoleRules: {
+        roleName: [{ required: true, message: '请输入角色名', trigger: 'blur' }]
+      }
     }
   },
   created () {
@@ -105,6 +130,26 @@ export default {
     this.getRolesList()
   },
   methods: {
+    // 编辑角色
+    updateRoleBtn (row) {
+      this.updateRoleForm.id = row.id
+      this.updateRoleForm.roleName = row.roleName
+      this.updateRoleForm.roleDesc = row.roleDesc
+      this.updateRoleVisible = true
+    },
+    // 关闭编辑角色
+    updateRoleClose () {
+      this.updateRoleVisible = false
+    },
+    // 提交修改角色信息
+    updateRole () {
+      console.log('提交修改角色信息')
+      this.$refs.updateRoleForm.validate(validate => {
+        if (!validate) return false
+        this.updateRoleFromId(this.updateRoleForm.id, this.updateRoleForm.roleName, this.updateRoleForm.roleDesc)
+      })
+    },
+    // 权限管理
     clickRightsBtn (row) {
       // 加载所有权限列表
       this.getRolesTree()
@@ -115,12 +160,14 @@ export default {
       // 显示弹出框
       this.updateRightsVisible = true
     },
+    // 关闭权限管理
     updateRightsClose () {
       // 还原初始状态
       this.rightsData = []
       this.defaultCheckedKeys = []
       this.defaultCheckedRole = 0
     },
+    // 角色授权确定按钮
     updateRights () {
       // 组装已选中和半选中的权限成数组
       let keys = [
@@ -212,6 +259,47 @@ export default {
             message: '已取消删除'
           })
         })
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 删除角色(网络请求)
+    deleteRoleFromId (roleId) {
+      deleteRoleFromId(roleId).then(res => {
+        // 弹窗确认
+        this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 确定
+          // 请求结果弹窗
+          if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
+          this.$message.success(res.data.meta.msg)
+          // 刷新列表
+          this.getRolesList()
+        }).catch(() => {
+          // 取消
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 编辑角色(网络请求)
+    updateRoleFromId (id, roleName, roleDesc = '') {
+      updateRoleFromId(id, roleName, roleDesc).then(res => {
+        // 请求结果弹窗
+        if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
+        this.$message.success(res.data.meta.msg)
+        // 刷新列表
+        this.updateRoleVisible = false
+        this.getRolesList()
+      }).catch(err => {
+        console.log(err)
       })
     }
   }
