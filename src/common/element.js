@@ -3,7 +3,7 @@ import {
   Button, Form, FormItem, Input, Message, Container, Aside,
   Main, Header, Menu, Submenu, MenuItem, MenuItemGroup, Breadcrumb,
   BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch, Tooltip,
-  Pagination, Dialog, MessageBox, Tag
+  Pagination, Dialog, MessageBox, Tag, Tree
 } from 'element-ui'
 
 Vue.use(Button)
@@ -30,6 +30,7 @@ Vue.use(Tooltip)
 Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Tag)
+Vue.use(Tree)
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

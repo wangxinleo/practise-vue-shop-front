@@ -13,3 +13,10 @@ export function getRoles () {
     method: 'get'
   })
 }
+
+export function deleteRightFromRoleIdRightId (roleId, rightId) {
+  return request({
+    url: 'roles/' + roleId + '/rights/' + rightId,
+    method: 'delete'
+  })
+}
