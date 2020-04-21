@@ -44,7 +44,7 @@ export default {
       getRights('list').then(res => {
         if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
         this.tableData = res.data.data
-        console.log(res)
+        // console.log(res)
       }).catch(err => {
         console.log(err)
       })

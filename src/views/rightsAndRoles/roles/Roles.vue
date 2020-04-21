@@ -34,7 +34,7 @@
                                 :key="thirdItem.id"
                                 closable type="warning"
                                 class="third-item"
-                                @close="deleteRightFromRoleIdRightId(scope.row, secItem.id)">{{thirdItem.authName}}</el-tag>
+                                @close="deleteRightFromRoleIdRightId(scope.row, thirdItem.id)">{{thirdItem.authName}}</el-tag>
                   </el-col>
                 </el-row>
               </el-col>
@@ -49,9 +49,9 @@
             <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
             <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
             <el-button type="warning" icon="el-icon-setting" size="mini" @click="clickRightsBtn(scope.row)">分配权限</el-button>
-            <pre>
-              {{scope.row}}
-            </pre>
+<!--            <pre>-->
+<!--              {{scope.row.children}}-->
+<!--            </pre>-->
           </template>
         </el-table-column>
       </el-table>
@@ -62,7 +62,12 @@
       :visible.sync="updateRightsVisible"
       width="60%"
       @close="updateRightsClose">
-      <el-tree :data="rightsData" :props="defaultProps" node-key="id" :default-checked-keys="defaultCheckedKeys" show-checkbox default-expand-all></el-tree>
+      <el-tree :data="rightsData"
+               :props="defaultProps"
+               ref="rightsTree"
+               node-key="id"
+               :default-checked-keys="defaultCheckedKeys"
+               show-checkbox default-expand-all></el-tree>
       <span slot="footer" class="dialog-footer">
           <el-button @click="updateRightsVisible = false">取 消</el-button>
           <el-button type="primary" @click="updateRights">确 定</el-button>
@@ -72,7 +77,7 @@
 </template>
 
 <script>
-import { getRights, getRoles, deleteRightFromRoleIdRightId } from '../../../network/rightsAndRoles/RightsAndRoles'
+import { getRights, getRoles, deleteRightFromRoleIdRightId, updateRightsNet } from '../../../network/rightsAndRoles/RightsAndRoles'
 
 export default {
   name: 'Roles',
@@ -90,7 +95,9 @@ export default {
         label: 'authName'
       },
       // 当前角色已有的权限
-      defaultCheckedKeys: []
+      defaultCheckedKeys: [],
+      // 当前操作角色
+      defaultCheckedRole: 0
     }
   },
   created () {
@@ -102,29 +109,45 @@ export default {
       // 加载所有权限列表
       this.getRolesTree()
       // 获取当前角色已有的权限
-
+      this.getRightsInRoles(row.children)
+      // 获取当前操作角色
+      this.defaultCheckedRole = row.id
       // 显示弹出框
       this.updateRightsVisible = true
     },
     updateRightsClose () {
-      console.log('updateRightsClose')
+      // 还原初始状态
+      this.rightsData = []
+      this.defaultCheckedKeys = []
+      this.defaultCheckedRole = 0
     },
     updateRights () {
-      console.log('updateRights')
+      // 组装已选中和半选中的权限成数组
+      let keys = [
+        ...this.$refs.rightsTree.getCheckedKeys(),
+        ...this.$refs.rightsTree.getHalfCheckedKeys()
+      ]
+      // 转换成后台可识别的字符串参数
+      keys = keys.join(',')
+      // 提交角色授权
+      this.updateRightsNet(this.defaultCheckedRole, keys)
     },
     // 取消对应角色对应ID权限（网络请求）
     deleteRightFromRoleIdRightId (role, rightId) {
       deleteRightFromRoleIdRightId(role.id, rightId).then(res => {
+        // 弹窗确认
         this.$confirm('此操作将永久取消该权限, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          // 确定
           if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
           this.$message.success(res.data.meta.msg)
           role.children = res.data.data
           console.log(res)
         }).catch(() => {
+          // 取消
           this.$message({
             type: 'info',
             message: '已取消删除'
@@ -135,15 +158,22 @@ export default {
       })
     },
     // 递归加载角色已有权限的id
-    getRightsInRoles () {
-
+    getRightsInRoles (parent) {
+      parent.forEach((item) => {
+        const child = item.children
+        if (child) {
+          this.getRightsInRoles(child)
+        } else {
+          this.defaultCheckedKeys.push(item.id)
+        }
+      })
     },
     // 加载数据（网络请求）
     getRolesList () {
       getRoles().then(res => {
+        // 请求结果弹窗
         if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
         this.tableData = res.data.data
-        // console.log(res)
       }).catch(err => {
         console.log(err)
       })
@@ -151,11 +181,37 @@ export default {
     // 加载所有权限列表-Tree(网络请求)
     getRolesTree () {
       getRights('tree').then(res => {
+        // 请求结果弹窗
         if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
         this.rightsData = res.data.data
-        console.log(res)
       }).catch(err => {
         console.log(err)
+      })
+    },
+    // 角色授权(网络请求)
+    updateRightsNet (roleId, rids) {
+      updateRightsNet(roleId, rids).then(res => {
+        // 弹窗确认
+        this.$confirm('此操作将永久给予角色选中的权限, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 确定
+          // 请求结果弹窗
+          if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
+          this.$message.success(res.data.meta.msg)
+          // 关闭角色授权页
+          this.updateRightsVisible = false
+          // 刷新列表
+          this.getRolesList()
+        }).catch(() => {
+          // 取消
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
       })
     }
   }
