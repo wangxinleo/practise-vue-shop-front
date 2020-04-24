@@ -8,7 +8,7 @@
     </el-breadcrumb>
     <!--    卡片主体-->
     <el-card>
-      123
+      123123123123
     </el-card>
   </div>
 </template>
