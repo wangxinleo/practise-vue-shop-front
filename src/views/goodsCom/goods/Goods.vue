@@ -73,6 +73,7 @@ export default {
         this.total = res.data.data.total
       }).catch(err => {
         console.log(err)
+        console.log('log');
       })
     }
   }
