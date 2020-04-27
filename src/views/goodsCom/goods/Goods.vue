@@ -22,8 +22,8 @@
         <!--添加商品弹出框-->
       </el-row>
       <el-table :data="goodsData" style="width: 100%" stripe border>
-        <el-table-column type="index" label="#" ></el-table-column>
-        <el-table-column prop="goods_name" label="商品名称" ></el-table-column>
+        <el-table-column type="index" label="#" :index="index"></el-table-column>
+        <el-table-column prop="goods_name" label="商品名称" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="goods_price" label="商品价格" width="100" ></el-table-column>
         <el-table-column prop="goods_weight" label="商品重量" width="80"></el-table-column>
         <el-table-column prop="add_time" label="创建时间" width="150"></el-table-column>
@@ -34,6 +34,15 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        @size-change="goodsSizeChange"
+        @current-change="goodsCurrentChange"
+        :current-page="pageNum"
+        :page-sizes="[1, 2, 5, 10]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
     </el-card>
   </div>
 </template>
@@ -45,10 +54,12 @@ export default {
   name: 'Goods',
   data () {
     return {
+      // 商品查询条件
       query: '',
-      pagenum: 1,
-      pagesize: 10,
+      pageNum: 1,
+      pageSize: 10,
       total: 0,
+      // 商品数据
       goodsData: []
     }
   },
@@ -56,24 +67,37 @@ export default {
     this.getGoods()
   },
   methods: {
+    index (val) {
+      return (this.pageNum - 1) * this.pageSize + val + 1
+    },
     // 清空搜索栏
     queryClick () {
-      console.log('queryClick')
+      this.getGoods(this.query, 1)
     },
+    // 添加商品
     addGoodClick () {
       console.log('addGoodClick')
     },
+    // 商品可显示列
+    goodsSizeChange (val) {
+      this.pageSize = Number(val)
+      this.getGoods()
+    },
+    // 商品选择页
+    goodsCurrentChange (val) {
+      this.pageNum = Number(val)
+      this.getGoods()
+    },
     // 获取商品数据(网络请求)
-    getGoods (query = this.query, pagenum = this.pagenum, pagesize = this.pagesize) {
-      getGoods(query, pagenum, pagesize).then(res => {
+    getGoods (query = this.query, pageNum = this.pageNum, pageSize = this.pageSize) {
+      getGoods(query, pageNum, pageSize).then(res => {
         console.log(res)
         if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.status)
         this.goodsData = res.data.data.goods
-        this.pagenum = res.data.data.pagenum
+        this.pageNum = Number(res.data.data.pagenum)
         this.total = res.data.data.total
       }).catch(err => {
         console.log(err)
-        console.log('log');
       })
     }
   }
