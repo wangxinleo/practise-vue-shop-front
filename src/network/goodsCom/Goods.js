@@ -11,3 +11,10 @@ export function getGoods (query, pagenum, pagesize) {
     }
   })
 }
+
+export function deleteGoodFromId (id) {
+  return request({
+    url: 'goods/' + id,
+    method: 'delete'
+  })
+}
