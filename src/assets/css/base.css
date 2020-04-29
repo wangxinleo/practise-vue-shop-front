@@ -21,3 +21,7 @@ html,body,#app{
 .el-table{
     font-size: 12px !important;
 }
+
+.el-cascader-menu {
+    height: 300px;
+}

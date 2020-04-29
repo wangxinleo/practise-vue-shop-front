@@ -18,7 +18,9 @@
                   :selection-type="false"
                   :expand-type="false"
                   :show-index="true"
-                  index-text="#" border>
+                  index-text="#"
+                  :show-row-hover="false"
+                  border>
 <!--        是否有效-->
         <template slot="isOk" slot-scope="scope">
           <i v-if="scope.row.cat_deleted === false" class="el-icon-success" style="color: lightgreen"></i>
@@ -54,10 +56,15 @@
       @close="addCategoryClose">
       <el-form :model="addCategoryForm" :rules="addCategoryRules" ref="addCategoryForm" label-width="80px">
         <el-form-item label="分类名称" prop="categoryName">
-          <el-input v-model="addCategoryForm.categoryName"></el-input>
+          <el-input v-model="addCategoryForm.cat_name"></el-input>
         </el-form-item>
-        <el-form-item label="父级分类" prop="categoryParent">
-          <el-input v-model="addCategoryForm.categoryParent"></el-input>
+        <el-form-item label="父级分类">
+          <el-cascader
+            v-model="selectKeys"
+            :options="categoriesParentData"
+            :props="categoriesProps"
+            @change="parentCateChange"
+            clearable></el-cascader>
         </el-form-item>
       </el-form>
       <span slot="footer">
@@ -106,19 +113,36 @@ export default {
       // 添加分类对话框
       addCategoryVisible: false,
       addCategoryForm: {
-        categoryName: '',
-        categoryParent: ''
+        cat_name: '',
+        cat_pid: 0,
+        cat_level: 0
       },
+      // 添加分类表单的验证规则对象
       addCategoryRules: {
-        categoryName: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
-        categoryParent: [{ required: true, message: '请选择有效的父级分类', trigger: 'blur' }]
-      }
+        categoryName: [{ required: true, message: '请输入分类名称', trigger: 'blur' }]
+      },
+      // 父级分类的列表
+      categoriesParentData: [],
+      // 制定级联选择器的配置对象
+      categoriesProps: {
+        expandTrigger: 'hover',
+        value: 'cat_id',
+        label: 'cat_name',
+        children: 'children',
+        checkStrictly: true
+      },
+      // 选中的父级分类的Id数组
+      selectKeys: []
     }
   },
   created () {
     this.getCategories()
   },
   methods: {
+    // 选择项发生变化触发这个函数
+    parentCateChange () {
+      console.log(this.selectKeys)
+    },
     // "添加分类"关闭
     addCategoryClose () {
       this.addCategoryVisible = false
@@ -140,14 +164,20 @@ export default {
     // 添加分类按钮
     addCategoryClick () {
       this.addCategoryVisible = true
-      console.log('addCategoryClick')
+      this.getCategories(2, '', '')
     },
     // 获取分类数据(网络请求)
     getCategories (type = this.type, pageNum = this.pageNum, pageSize = this.pageSize) {
       getCategories(type, pageNum, pageSize).then(res => {
         if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
-        this.categoriesData = res.data.data.result
-        this.total = res.data.data.total
+        if (type === 2) {
+          console.log(res)
+          this.categoriesParentData = res.data.data
+        } else {
+          console.log(res)
+          this.categoriesData = res.data.data.result
+          this.total = res.data.data.total
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -159,5 +189,8 @@ export default {
 <style scoped>
 .el-row{
   margin-bottom: 15px;
+}
+.el-cascader{
+  width: 100%;
 }
 </style>
