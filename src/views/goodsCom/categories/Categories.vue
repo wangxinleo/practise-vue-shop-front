@@ -55,7 +55,7 @@
       width="60%"
       @close="addCategoryClose">
       <el-form :model="addCategoryForm" :rules="addCategoryRules" ref="addCategoryForm" label-width="80px">
-        <el-form-item label="分类名称" prop="categoryName">
+        <el-form-item label="分类名称" prop="cat_name">
           <el-input v-model="addCategoryForm.cat_name"></el-input>
         </el-form-item>
         <el-form-item label="父级分类">
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { getCategories } from '../../../network/goodsCom/Categories'
+import { getCategories, addCategories } from '../../../network/goodsCom/Categories'
 
 export default {
   name: 'Categories',
@@ -142,13 +142,23 @@ export default {
     // 选择项发生变化触发这个函数
     parentCateChange () {
       console.log(this.selectKeys)
+      if (this.selectKeys.length > 0) {
+        this.addCategoryForm.cat_pid = this.selectKeys[this.selectKeys.length - 1]
+        this.addCategoryForm.cat_level = this.selectKeys.length
+      } else {
+        this.addCategoryForm.cat_pid = 0
+        this.addCategoryForm.cat_level = 0
+      }
     },
     // "添加分类"关闭
     addCategoryClose () {
+      this.addCategoryForm.cat_name = ''
+      this.selectKeys = ''
       this.addCategoryVisible = false
     },
     // 提交“添加分类”
     addCategorySubmit () {
+      this.addCategories()
       this.addCategoryVisible = false
     },
     // 分页
@@ -178,6 +188,20 @@ export default {
           this.categoriesData = res.data.data.result
           this.total = res.data.data.total
         }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 创建分类(网络请求)
+    addCategories (
+      catPid = this.addCategoryForm.cat_pid,
+      catName = this.addCategoryForm.cat_name,
+      catLevel = this.addCategoryForm.cat_level) {
+      addCategories(catPid, catName, catLevel).then(res => {
+        console.log(res)
+        if (res.data.meta.status !== 201) return this.$message.error(res.data.meta.msg)
+        this.$message.success(res.data.meta.msg)
+        this.getCategories()
       }).catch(err => {
         console.log(err)
       })
