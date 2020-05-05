@@ -8,10 +8,15 @@
       </el-breadcrumb>
       <!--    卡片主体-->
       <el-card>
-        实在是五一放假没啥好提交的啦，就这样吧
-        没错，今天也没啥好说的
-        今天也是~
-        hahahah,每天不知道自己在干嘛
+        <el-alert
+          title="注意：只允许为第三级分类设置相关参数！"
+          type="warning">
+        </el-alert>
+        <el-row>
+          <el-col :span="6">
+            <lable>选择商品分类：</lable>
+          </el-col>
+        </el-row>
       </el-card>
     </div>
 </template>
@@ -23,5 +28,7 @@ export default {
 </script>
 
 <style scoped>
-
+.el-alert{
+  margin-bottom: 15px;
+}
 </style>

@@ -26,7 +26,11 @@
         <el-table-column prop="goods_name" label="商品名称" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="goods_price" label="商品价格" width="100" ></el-table-column>
         <el-table-column prop="goods_weight" label="商品重量" width="80"></el-table-column>
-        <el-table-column prop="add_time" label="创建时间" width="150"></el-table-column>
+        <el-table-column prop="add_time" label="创建时间" width="150">
+          <template slot-scope="scope">
+            {{scope.row.add_time | dataFormat}}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <el-button type="primary" icon="el-icon-edit" size="mini" @click="console.log(scope.row.goods_id)"></el-button>
