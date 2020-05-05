@@ -23,3 +23,20 @@ export function addCategories (catPid, catName, catLevel) {
     }
   })
 }
+
+export function deleteCategoriesById (id) {
+  return request({
+    url: 'categories/' + id,
+    method: 'delete'
+  })
+}
+
+export function updateCategories (id, name) {
+  return request({
+    url: 'categories/' + id,
+    method: 'put',
+    data: {
+      cat_name: name
+    }
+  })
+}

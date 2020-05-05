@@ -34,8 +34,8 @@
         </template>
 <!--        操作-->
         <template slot="option" slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" size="mini" @click="update(scope.row.id)">编辑</el-button>
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteUser(scope.row.id)">删除</el-button>
+          <el-button type="primary" icon="el-icon-edit" size="mini" @click="updateCategoriesByIdClick(scope.row.cat_id, scope.row.cat_name)">编辑</el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteCategoriesByIdClick(scope.row.cat_id)">删除</el-button>
         </template>
       </tree-table>
       <el-pagination
@@ -72,11 +72,23 @@
           <el-button type="primary" @click="addCategorySubmit">确 定</el-button>
         </span>
     </el-dialog>
+<!--    修改分类名字对话框-->
+    <el-dialog title="修改分类" :visible="updateCategoryVisible" width="60%" @close="updateCategoryClose">
+      <el-form :model="updateCategoryForm" :rules="updateCategoryRules" ref="updateCategoryForm" label-width="80px">
+        <el-form-item label="分类名称" prop="cat_name">
+          <el-input v-model="updateCategoryForm.cat_name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+          <el-button @click="updateCategoryVisible = false">取 消</el-button>
+          <el-button type="primary" @click="updateCategorySubmit">确 定</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getCategories, addCategories } from '../../../network/goodsCom/Categories'
+import { getCategories, addCategories, deleteCategoriesById, updateCategories } from '../../../network/goodsCom/Categories'
 
 export default {
   name: 'Categories',
@@ -110,6 +122,16 @@ export default {
       pageNum: 1,
       pageSize: 10,
       total: 0,
+      // 修改分类对话框
+      updateCategoryVisible: false,
+      updateCategoryForm: {
+        cat_name: '',
+        cat_id: 0
+      },
+      // 修改分类表单的验证规则对象
+      updateCategoryRules: {
+        cat_name: [{ required: true, message: '请输入分类名称', trigger: 'blur' }]
+      },
       // 添加分类对话框
       addCategoryVisible: false,
       addCategoryForm: {
@@ -119,7 +141,7 @@ export default {
       },
       // 添加分类表单的验证规则对象
       addCategoryRules: {
-        categoryName: [{ required: true, message: '请输入分类名称', trigger: 'blur' }]
+        cat_name: [{ required: true, message: '请输入分类名称', trigger: 'blur' }]
       },
       // 父级分类的列表
       categoriesParentData: [],
@@ -156,10 +178,26 @@ export default {
       this.selectKeys = ''
       this.addCategoryVisible = false
     },
+    // "修改分类"关闭
+    updateCategoryClose () {
+      this.updateCategoryForm.cat_name = ''
+      this.updateCategoryVisible = false
+    },
     // 提交“添加分类”
     addCategorySubmit () {
-      this.addCategories()
-      this.addCategoryVisible = false
+      this.$refs.addCategoryForm.validate(validate => {
+        if (!validate) return false
+        this.addCategories()
+        this.addCategoryVisible = false
+      })
+    },
+    // 提交“修改分类”
+    updateCategorySubmit () {
+      this.$refs.updateCategoryForm.validate(validate => {
+        if (!validate) return false
+        this.updateCategories()
+        this.updateCategoryVisible = false
+      })
     },
     // 分页
     categoriesSizeChange (val) {
@@ -175,6 +213,17 @@ export default {
     addCategoryClick () {
       this.addCategoryVisible = true
       this.getCategories(2, '', '')
+    },
+    // 修改分类按钮
+    updateCategoriesByIdClick (id, name) {
+      this.updateCategoryForm.cat_id = id
+      this.updateCategoryForm.cat_name = name
+      this.updateCategoryVisible = true
+    },
+    // 删除分类按钮
+    deleteCategoriesByIdClick (id) {
+      console.log(id)
+      this.deleteCategoriesById(id)
     },
     // 获取分类数据(网络请求)
     getCategories (type = this.type, pageNum = this.pageNum, pageSize = this.pageSize) {
@@ -200,6 +249,42 @@ export default {
       addCategories(catPid, catName, catLevel).then(res => {
         console.log(res)
         if (res.data.meta.status !== 201) return this.$message.error(res.data.meta.msg)
+        this.$message.success(res.data.meta.msg)
+        this.getCategories()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 根据id删除分类(网络请求)
+    deleteCategoriesById (id) {
+      deleteCategoriesById(id).then(res => {
+        console.log(res)
+        // 弹窗确认
+        this.$confirm('此操作将永久取消该分类, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 确定
+          if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
+          this.$message.success(res.data.meta.msg)
+          this.getCategories()
+        }).catch(() => {
+          // 取消
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 修改分类(网络请求)
+    updateCategories (id = this.updateCategoryForm.cat_id, name = this.updateCategoryForm.cat_name) {
+      updateCategories(id, name).then(res => {
+        console.log(res)
+        if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
         this.$message.success(res.data.meta.msg)
         this.getCategories()
       }).catch(err => {
