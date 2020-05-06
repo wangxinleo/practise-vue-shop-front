@@ -13,8 +13,14 @@
           type="warning">
         </el-alert>
         <el-row>
-          <el-col :span="6">
-            <lable>选择商品分类：</lable>
+          <el-col :span="12">
+            <span>选择商品分类：</span>
+            <el-cascader
+              v-model="selectKeys"
+              :options="categoriesData"
+              :props="categoriesProps"
+              @change="categoriesChange"
+              clearable></el-cascader>
           </el-col>
         </el-row>
       </el-card>
@@ -22,13 +28,48 @@
 </template>
 
 <script>
+import { getCategories } from '../../../network/goodsCom/Categories'
+
 export default {
-  name: 'Params'
+  name: 'Params',
+  data () {
+    return {
+      selectKeys: [],
+      categoriesData: [],
+      categoriesProps: {
+        expandTrigger: 'hover',
+        value: 'cat_id',
+        label: 'cat_name',
+        children: 'children'
+      }
+    }
+  },
+  created () {
+    this.getCategories()
+  },
+  methods: {
+    categoriesChange () {
+      console.log('改变')
+    },
+    // 获取分类数据(网络请求)
+    getCategories (type = '', pageNum = '', pageSize = '') {
+      getCategories(type, pageNum, pageSize).then(res => {
+        if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
+        console.log(res)
+        this.categoriesData = res.data.data
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+  }
 }
 </script>
 
 <style scoped>
 .el-alert{
   margin-bottom: 15px;
+}
+.el-cascader{
+  width: 70%;
 }
 </style>

@@ -4,6 +4,7 @@ import router from './router'
 import './common/element.js'
 import './assets/fonts/iconfont.css'
 import TreeTable from 'vue-table-with-tree-grid'
+import store from './store'
 
 Vue.config.productionTip = false
 Vue.prototype.$bus = new Vue()
@@ -23,5 +24,6 @@ Vue.filter('dataFormat', function (originVal) {
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
