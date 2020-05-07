@@ -100,7 +100,7 @@
 
 <script>
 import { getCategories } from '../../../network/goodsCom/Categories'
-import { getAttributesById } from '../../../network/goodsCom/Params'
+import { getAttributesById, getParamsByAttrId } from '../../../network/goodsCom/Params'
 
 export default {
   name: 'Params',
@@ -167,7 +167,8 @@ export default {
     },
     // 展开列触发
     openRow (row, expandedRows) {
-      console.log(expandedRows)
+      if (expandedRows === '') return false
+      console.log(expandedRows[0].attr_id)
     },
     // 获取分类数据(网络请求)
     getCategories (type = '', pageNum = '', pageSize = '') {
@@ -189,7 +190,7 @@ export default {
     },
     // 根据id和attrId获取参数数据(网络请求)
     getParamsByAttrId (id, attrId, attrSel, attrVals = '') {
-      getAttributesById(id, attrId, attrSel, attrVals).then(res => {
+      getParamsByAttrId(id, attrId, attrSel, attrVals).then(res => {
         console.log(res)
       }).catch(err => {
         console.log(err)
