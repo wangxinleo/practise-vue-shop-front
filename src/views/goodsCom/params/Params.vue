@@ -167,7 +167,7 @@ export default {
     },
     // 展开列触发
     openRow (row, expandedRows) {
-      if (expandedRows === '') return false
+      if (expandedRows.length === 0) return false
       console.log(expandedRows[0].attr_id)
     },
     // 获取分类数据(网络请求)
