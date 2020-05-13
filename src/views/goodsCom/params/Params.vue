@@ -124,7 +124,7 @@ export default {
       // 静态属性数据
       staticData: [],
       // 动态数据标签
-      dynamicTags: ['标签一', '标签二', '333333'],
+      dynamicTags: ['标签一', '标签二', '3~~~~~~3'],
       inputVisible: false,
       inputValue: ''
     }
