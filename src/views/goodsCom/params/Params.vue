@@ -29,7 +29,7 @@
           <el-tab-pane label="动态参数" name="dynamic">
             <el-row>
               <el-col :span="4">
-                <el-button type="primary" size="mini" class="add-attr">添加属性</el-button>
+                <el-button type="primary" size="mini" class="add-attr" @click="openAdd">{{'添加'+paramsOrAttr}}</el-button>
               </el-col>
               <el-table
                 :data="dynamicData"
@@ -69,10 +69,10 @@
               </el-table>
             </el-row>
           </el-tab-pane>
-          <el-tab-pane label="静态参数" name="static">
+          <el-tab-pane label="静态属性" name="static">
             <el-row>
               <el-col :span="4">
-                <el-button type="primary" size="mini" class="add-attr">添加属性</el-button>
+                <el-button type="primary" size="mini" class="add-attr" @click="openAdd">{{'添加'+paramsOrAttr}}</el-button>
               </el-col>
               <el-table
                 :data="staticData"
@@ -95,12 +95,28 @@
           </el-tab-pane>
         </el-tabs>
       </el-card>
+<!--      添加窗口-->
+      <el-dialog
+        :title="'添加'+paramsOrAttr"
+        :visible.sync="addParamsVisible"
+        @close="addParamsClose"
+        width="50%">
+        <el-form :model="addForm" :rules="addrules" ref="addForm" label-width="80px">
+          <el-form-item :label="paramsOrAttr" prop="name">
+            <el-input v-model="addForm.name"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer">
+          <el-button @click="addParamsVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addFormSubmit">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
 </template>
 
 <script>
 import { getCategories } from '../../../network/goodsCom/Categories'
-import { getAttributesById, getParamsByAttrId } from '../../../network/goodsCom/Params'
+import { getAttributesById, getParamsByAttrId, addParams } from '../../../network/goodsCom/Params'
 
 export default {
   name: 'Params',
@@ -126,11 +142,30 @@ export default {
       // 动态数据标签
       dynamicTags: ['标签一', '标签二', '3~~~~~~3'],
       inputVisible: false,
-      inputValue: ''
+      inputValue: '',
+      // 添加对话框
+      addParamsVisible: false,
+      addForm: {
+        name: ''
+      },
+      addrules: {
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ]
+      }
     }
   },
   created () {
     this.getCategories()
+  },
+  computed: {
+    paramsOrAttr () {
+      if (this.activeName === 'dynamic') {
+        return '动态参数'
+      } else {
+        return '静态属性'
+      }
+    }
   },
   methods: {
     // 选中标签页改变
@@ -170,6 +205,26 @@ export default {
       if (expandedRows.length === 0) return false
       console.log(expandedRows[0].attr_id)
     },
+    // 打开对话框
+    openAdd () {
+      this.addParamsVisible = true
+    },
+    // 关闭对话框
+    addParamsClose () {
+      this.addForm.name = ''
+      this.addParamsVisible = false
+    },
+    // 提交表单
+    addFormSubmit () {
+      this.$refs.addForm.validate(validate => {
+        if (!validate) return false
+        const id = this.selectKeys[this.selectKeys.length - 1]
+        const name = this.addForm.name
+        const sel = this.activeName === 'dynamic' ? 'many' : 'only'
+        this.addParams(id, name, sel)
+      })
+      this.addParamsVisible = false
+    },
     // 获取分类数据(网络请求)
     getCategories (type = '', pageNum = '', pageSize = '') {
       getCategories(type, pageNum, pageSize).then(res => {
@@ -192,6 +247,17 @@ export default {
     getParamsByAttrId (id, attrId, attrSel, attrVals = '') {
       getParamsByAttrId(id, attrId, attrSel, attrVals).then(res => {
         console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 添加动态参数或者静态属性(网络请求)
+    addParams (id, attrName, attrSel, attrVals = '') {
+      addParams(id, attrName, attrSel, attrVals).then(res => {
+        console.log(res)
+        if (res.data.meta.status !== 201) return this.$message.error(res.data.meta.msg)
+        this.$message.success(res.data.meta.msg)
+        this.getCategories()
       }).catch(err => {
         console.log(err)
       })

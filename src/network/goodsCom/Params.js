@@ -20,3 +20,14 @@ export function getParamsByAttrId (id, attrId, attrSel, attrVals) {
     }
   })
 }
+export function addParams (id, attrName, attrSel, attrVals) {
+  return request({
+    url: 'categories/' + id + '/attributes',
+    method: 'post',
+    data: {
+      attr_name: attrName,
+      attr_sel: attrSel,
+      attr_vals: attrVals
+    }
+  })
+}
