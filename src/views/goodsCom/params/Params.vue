@@ -257,7 +257,7 @@ export default {
         console.log(res)
         if (res.data.meta.status !== 201) return this.$message.error(res.data.meta.msg)
         this.$message.success(res.data.meta.msg)
-        this.getCategories()
+        this.getAttributesById(id, attrSel)
       }).catch(err => {
         console.log(err)
       })
