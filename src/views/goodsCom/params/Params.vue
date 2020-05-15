@@ -140,7 +140,7 @@ export default {
       // 静态属性数据
       staticData: [],
       // 动态数据标签
-      dynamicTags: ['标签一', '标签二', '3~~~~~~3'],
+      dynamicTags: ['标签一', '标签二', '标签三'],
       inputVisible: false,
       inputValue: '',
       // 添加对话框
