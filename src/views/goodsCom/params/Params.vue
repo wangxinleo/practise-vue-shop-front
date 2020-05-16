@@ -1,122 +1,109 @@
+/*
+ * @Author: wangxin.leo
+ * @Date: 2020-05-16 20:01:40
+ * @Last Modified by:   wangxin.leo
+ * @Last Modified time: 2020-05-16 20:01:40
+ */
 <template>
-    <div class="params">
-      <!--    面包屑导航-->
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-        <el-breadcrumb-item>商品分类</el-breadcrumb-item>
-      </el-breadcrumb>
-      <!--    卡片主体-->
-      <el-card>
-        <el-alert
-          title="注意：只允许为第三级分类设置相关参数！"
-          type="warning">
-        </el-alert>
-        <el-row>
-          <el-col :span="12">
-            <span>选择商品分类：</span>
-<!--            级联选择器-->
-            <el-cascader
-              v-model="selectKeys"
-              :options="categoriesData"
-              :props="categoriesProps"
-              @change="categoriesChange"
-              clearable></el-cascader>
-          </el-col>
-        </el-row>
-<!--        标签页-->
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="动态参数" name="dynamic">
-            <el-row>
-              <el-col :span="4">
-                <el-button type="primary" size="mini" class="add-attr" @click="openAdd">{{'添加'+paramsOrAttr}}</el-button>
-              </el-col>
-              <el-table
-                :data="dynamicData"
-                style="width: 100%"
-                @expand-change="openRow" border stripe>
-                <el-table-column type="expand">
-                  <template slot-scope="scope">
-                    <el-tag
-                      :key="tag"
-                      v-for="tag in dynamicTags"
-                      closable
-                      :disable-transitions="false"
-                      @close="handleClose(tag)">
-                      {{tag}}
-                    </el-tag>
-                    <el-input
-                      v-if="inputVisible"
-                      v-model="inputValue"
-                      ref="saveTagInput"
-                      size="small"
-                      @keyup.enter.native="handleInputConfirm"
-                      @blur="handleInputConfirm"
-                    >
-                    </el-input>
-                    <el-button v-else size="small" @click="showInput">+ New Tag</el-button>
-                    <div>{{scope.row}}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column type="index" label="#"></el-table-column>
-                <el-table-column prop="attr_name" label="属性名称"></el-table-column>
-                <el-table-column label="操作">
-                  <template>
-                    <el-button icon="el-icon-edit" type="primary" size="mini">修改</el-button>
-                    <el-button icon="el-icon-delete" type="danger" size="mini">删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-row>
-          </el-tab-pane>
-          <el-tab-pane label="静态属性" name="static">
-            <el-row>
-              <el-col :span="4">
-                <el-button type="primary" size="mini" class="add-attr" @click="openAdd">{{'添加'+paramsOrAttr}}</el-button>
-              </el-col>
-              <el-table
-                :data="staticData"
-                style="width: 100%" border stripe>
-                <el-table-column type="expand">
-                  <template slot-scope="scope">
-                    {{scope.row}}
-                  </template>
-                </el-table-column>
-                <el-table-column type="index" label="#"></el-table-column>
-                <el-table-column prop="attr_name" label="属性名称"></el-table-column>
-                <el-table-column label="操作">
-                  <template>
-                    <el-button icon="el-icon-edit" type="primary" size="mini">修改</el-button>
-                    <el-button icon="el-icon-delete" type="danger" size="mini">删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-row>
-          </el-tab-pane>
-        </el-tabs>
-      </el-card>
-<!--      添加窗口-->
-      <el-dialog
-        :title="'添加'+paramsOrAttr"
-        :visible.sync="addParamsVisible"
-        @close="addParamsClose"
-        width="50%">
-        <el-form :model="addForm" :rules="addrules" ref="addForm" label-width="80px">
-          <el-form-item :label="paramsOrAttr" prop="name">
-            <el-input v-model="addForm.name"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer">
-          <el-button @click="addParamsVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addFormSubmit">确 定</el-button>
-        </span>
-      </el-dialog>
-    </div>
+  <div class="params">
+    <!--    面包屑导航-->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>商品管理</el-breadcrumb-item>
+      <el-breadcrumb-item>商品分类</el-breadcrumb-item>
+    </el-breadcrumb>
+    <!--    卡片主体-->
+    <el-card>
+      <el-alert title="注意：只允许为第三级分类设置相关参数！" type="warning"></el-alert>
+      <el-row>
+        <el-col :span="12">
+          <span>选择商品分类：</span>
+          <!--            级联选择器-->
+          <el-cascader v-model="selectKeys" :options="categoriesData" :props="categoriesProps"
+            @change="categoriesChange" clearable></el-cascader>
+        </el-col>
+      </el-row>
+      <!--        标签页-->
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="动态参数" name="dynamic">
+          <el-row>
+            <el-col :span="4">
+              <el-button type="primary" size="mini" class="add-attr" @click="openAdd">{{ "添加" + paramsOrAttr }}
+              </el-button>
+            </el-col>
+            <el-table :data="dynamicData" style="width: 100%" @expand-change="openRow" border stripe>
+              <el-table-column type="expand">
+                <template slot-scope="scope">
+                  <el-tag :key="tag" v-for="tag in dynamicTags" closable :disable-transitions="false"
+                    @close="handleClose(tag)">
+                    {{ tag }}
+                  </el-tag>
+                  <el-input v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small"
+                    @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
+                  </el-input>
+                  <el-button v-else size="small" @click="showInput">+ New Tag</el-button>
+                  <div>{{ scope.row }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column type="index" label="#"></el-table-column>
+              <el-table-column prop="attr_name" label="属性名称">
+              </el-table-column>
+              <el-table-column label="操作">
+                <template>
+                  <el-button icon="el-icon-edit" type="primary" size="mini">修改</el-button>
+                  <el-button icon="el-icon-delete" type="danger" size="mini">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="静态属性" name="static">
+          <el-row>
+            <el-col :span="4">
+              <el-button type="primary" size="mini" class="add-attr" @click="openAdd">{{ "添加" + paramsOrAttr }}
+              </el-button>
+            </el-col>
+            <el-table :data="staticData" style="width: 100%" border stripe>
+              <el-table-column type="expand">
+                <template slot-scope="scope">
+                  {{ scope.row }}
+                </template>
+              </el-table-column>
+              <el-table-column type="index" label="#"></el-table-column>
+              <el-table-column prop="attr_name" label="属性名称"></el-table-column>
+              <el-table-column label="操作">
+                <template>
+                  <el-button icon="el-icon-edit" type="primary" size="mini">修改</el-button>
+                  <el-button icon="el-icon-delete" type="danger" size="mini">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
+    <!--      添加窗口-->
+    <el-dialog :title="'添加' + paramsOrAttr" :visible.sync="addParamsVisible" @close="addParamsClose" width="50%">
+      <el-form :model="addForm" :rules="addrules" ref="addForm" label-width="80px">
+        <el-form-item :label="paramsOrAttr" prop="name">
+          <el-input v-model="addForm.name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="addParamsVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addFormSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
 import { getCategories } from '../../../network/goodsCom/Categories'
-import { getAttributesById, getParamsByAttrId, addParams } from '../../../network/goodsCom/Params'
+import {
+  getAttributesById,
+  getParamsByAttrId,
+  addParams
+} from '../../../network/goodsCom/Params'
 
 export default {
   name: 'Params',
@@ -149,13 +136,12 @@ export default {
         name: ''
       },
       addrules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
-        ]
+        name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
       }
     }
   },
   created () {
+    console.log('123')
     this.getCategories()
   },
   computed: {
@@ -227,53 +213,63 @@ export default {
     },
     // 获取分类数据(网络请求)
     getCategories (type = '', pageNum = '', pageSize = '') {
-      getCategories(type, pageNum, pageSize).then(res => {
-        if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
-        this.categoriesData = res.data.data
-      }).catch(err => {
-        console.log(err)
-      })
+      getCategories(type, pageNum, pageSize)
+        .then(res => {
+          if (res.data.meta.status !== 200) { return this.$message.error(res.data.meta.msg) }
+          this.categoriesData = res.data.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     // 根据id获取分类详细参数(网络请求)
     getAttributesById (id, sel) {
-      getAttributesById(id, sel).then(res => {
-        if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
-        sel === 'only' ? this.staticData = res.data.data : this.dynamicData = res.data.data
-      }).catch(err => {
-        console.log(err)
-      })
+      getAttributesById(id, sel)
+        .then(res => {
+          if (res.data.meta.status !== 200) { return this.$message.error(res.data.meta.msg) }
+          sel === 'only'
+            ? (this.staticData = res.data.data)
+            : (this.dynamicData = res.data.data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     // 根据id和attrId获取参数数据(网络请求)
     getParamsByAttrId (id, attrId, attrSel, attrVals = '') {
-      getParamsByAttrId(id, attrId, attrSel, attrVals).then(res => {
-        console.log(res)
-      }).catch(err => {
-        console.log(err)
-      })
+      getParamsByAttrId(id, attrId, attrSel, attrVals)
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     // 添加动态参数或者静态属性(网络请求)
     addParams (id, attrName, attrSel, attrVals = '') {
-      addParams(id, attrName, attrSel, attrVals).then(res => {
-        console.log(res)
-        if (res.data.meta.status !== 201) return this.$message.error(res.data.meta.msg)
-        this.$message.success(res.data.meta.msg)
-        this.getAttributesById(id, attrSel)
-      }).catch(err => {
-        console.log(err)
-      })
+      addParams(id, attrName, attrSel, attrVals)
+        .then(res => {
+          console.log(res)
+          if (res.data.meta.status !== 201) { return this.$message.error(res.data.meta.msg) }
+          this.$message.success(res.data.meta.msg)
+          this.getAttributesById(id, attrSel)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 }
 </script>
 
 <style scoped>
-.el-alert{
+.el-alert {
   margin-bottom: 15px;
 }
-.el-cascader{
+.el-cascader {
   width: 70%;
 }
-.add-attr{
+.add-attr {
   margin-bottom: 15px;
 }
 </style>

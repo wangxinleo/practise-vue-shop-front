@@ -1,5 +1,10 @@
 import { request } from '../request'
-
+/**
+ *
+ * @param {*} type
+ * @param {*} pageNum
+ * @param {*} pageSize
+ */
 export function getCategories (type, pageNum, pageSize) {
   return request({
     url: 'categories',
@@ -11,7 +16,12 @@ export function getCategories (type, pageNum, pageSize) {
     }
   })
 }
-
+/**
+ *
+ * @param {*} catPid
+ * @param {*} catName
+ * @param {*} catLevel
+ */
 export function addCategories (catPid, catName, catLevel) {
   return request({
     url: 'categories',
