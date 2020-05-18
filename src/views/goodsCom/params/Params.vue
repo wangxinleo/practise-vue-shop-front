@@ -1,8 +1,8 @@
 /*
  * @Author: wangxin.leo
  * @Date: 2020-05-16 20:01:40
- * @Last Modified by:   wangxin.leo
- * @Last Modified time: 2020-05-16 20:01:40
+ * @Last Modified by: wangxin.leo
+ * @Last Modified time: 2020-05-18 16:37:17
  */
 <template>
   <div class="params">
@@ -208,8 +208,8 @@ export default {
         const name = this.addForm.name
         const sel = this.activeName === 'dynamic' ? 'many' : 'only'
         this.addParams(id, name, sel)
+        this.addParamsVisible = false
       })
-      this.addParamsVisible = false
     },
     // 获取分类数据(网络请求)
     getCategories (type = '', pageNum = '', pageSize = '') {
