@@ -31,3 +31,15 @@ export function addParams (id, attrName, attrSel, attrVals) {
     }
   })
 }
+
+export function editParams (id, attrId, attrName, attrSel, attrVals) {
+  return request({
+    url: 'categories/' + id + '/attributes/' + attrId,
+    method: 'put',
+    data: {
+      attr_name: attrName,
+      attr_sel: attrSel,
+      attr_vals: attrVals
+    }
+  })
+}

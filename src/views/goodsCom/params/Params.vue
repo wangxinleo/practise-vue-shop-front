@@ -2,7 +2,7 @@
  * @Author: wangxin.leo
  * @Date: 2020-05-16 20:01:40
  * @Last Modified by: wangxin.leo
- * @Last Modified time: 2020-05-18 16:37:17
+ * @Last Modified time: 2020-05-20 17:26:20
  */
 <template>
   <div class="params">
@@ -28,7 +28,8 @@
         <el-tab-pane label="动态参数" name="dynamic">
           <el-row>
             <el-col :span="4">
-              <el-button type="primary" size="mini" class="add-attr" @click="openAdd">{{ "添加" + paramsOrAttr }}
+              <el-button type="primary" size="mini" class="add-attr" :disabled="isBtnDisplay" @click="openAdd">
+                {{ "添加" + paramsOrAttr }}
               </el-button>
             </el-col>
             <el-table :data="dynamicData" style="width: 100%" @expand-change="openRow" border stripe>
@@ -49,8 +50,9 @@
               <el-table-column prop="attr_name" label="属性名称">
               </el-table-column>
               <el-table-column label="操作">
-                <template>
-                  <el-button icon="el-icon-edit" type="primary" size="mini">修改</el-button>
+                <template slot-scope="scope">
+                  <el-button icon="el-icon-edit" type="primary" @click="editParams(scope.row)" size="mini">修改
+                  </el-button>
                   <el-button icon="el-icon-delete" type="danger" size="mini">删除</el-button>
                 </template>
               </el-table-column>
@@ -60,7 +62,8 @@
         <el-tab-pane label="静态属性" name="static">
           <el-row>
             <el-col :span="4">
-              <el-button type="primary" size="mini" class="add-attr" @click="openAdd">{{ "添加" + paramsOrAttr }}
+              <el-button type="primary" size="mini" class="add-attr" :disabled="isBtnDisplay" @click="openAdd">
+                {{ "添加" + paramsOrAttr }}
               </el-button>
             </el-col>
             <el-table :data="staticData" style="width: 100%" border stripe>
@@ -72,8 +75,9 @@
               <el-table-column type="index" label="#"></el-table-column>
               <el-table-column prop="attr_name" label="属性名称"></el-table-column>
               <el-table-column label="操作">
-                <template>
-                  <el-button icon="el-icon-edit" type="primary" size="mini">修改</el-button>
+                <template slot-scope="scope">
+                  <el-button icon="el-icon-edit" type="primary" @click="openEdit(scope.row)" size="mini">修改
+                  </el-button>
                   <el-button icon="el-icon-delete" type="danger" size="mini">删除</el-button>
                 </template>
               </el-table-column>
@@ -94,6 +98,18 @@
         <el-button type="primary" @click="addFormSubmit">确 定</el-button>
       </span>
     </el-dialog>
+    <!--      修改窗口-->
+    <el-dialog :title="'修改' + paramsOrAttr" :visible.sync="editParamsVisible" @close="editParamsClose" width="50%">
+      <el-form :model="editForm" :rules="editrules" ref="editForm" label-width="80px">
+        <el-form-item :label="paramsOrAttr" prop="name">
+          <el-input v-model="editForm.name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="editParamsVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editFormSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -102,7 +118,8 @@ import { getCategories } from '../../../network/goodsCom/Categories'
 import {
   getAttributesById,
   getParamsByAttrId,
-  addParams
+  addParams,
+  editParams
 } from '../../../network/goodsCom/Params'
 
 export default {
@@ -137,6 +154,15 @@ export default {
       },
       addrules: {
         name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
+      },
+      // 修改对话框
+      editParamsVisible: false,
+      editForm: {
+        attrId: '',
+        name: ''
+      },
+      editrules: {
+        name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
       }
     }
   },
@@ -151,11 +177,19 @@ export default {
       } else {
         return '静态属性'
       }
+    },
+    isBtnDisplay () {
+      if (this.selectKeys.length !== 3) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
     // 选中标签页改变
     handleClick () {
+      if (this.isBtnDisplay === true) return false
       const id = this.selectKeys[this.selectKeys.length - 1]
       const sel = this.activeName === 'dynamic' ? 'many' : 'only'
       this.getAttributesById(id, sel)
@@ -191,11 +225,11 @@ export default {
       if (expandedRows.length === 0) return false
       console.log(expandedRows[0].attr_id)
     },
-    // 打开对话框
+    // 打开"添加"对话框
     openAdd () {
       this.addParamsVisible = true
     },
-    // 关闭对话框
+    // 关闭"添加"对话框
     addParamsClose () {
       this.addForm.name = ''
       this.addParamsVisible = false
@@ -209,6 +243,30 @@ export default {
         const sel = this.activeName === 'dynamic' ? 'many' : 'only'
         this.addParams(id, name, sel)
         this.addParamsVisible = false
+      })
+    },
+    // 打开"修改"对话框
+    openEdit (row) {
+      this.editForm.name = row.attr_name
+      this.editForm.attrId = row.attr_id
+      this.editParamsVisible = true
+    },
+    // 关闭"修改"对话框
+    editParamsClose () {
+      this.editForm.name = ''
+      this.editForm.attrId = ''
+      this.editParamsVisible = false
+    },
+    // 提交"修改"表单
+    editFormSubmit () {
+      this.$refs.editForm.validate(validate => {
+        if (!validate) return false
+        const id = this.selectKeys[this.selectKeys.length - 1]
+        // TODO: 拼凑修改所需参数
+        const name = this.editForm.name
+        const sel = this.activeName === 'dynamic' ? 'many' : 'only'
+        this.editParams(id, name, sel)
+        this.editParamsVisible = false
       })
     },
     // 获取分类数据(网络请求)
@@ -248,6 +306,19 @@ export default {
     // 添加动态参数或者静态属性(网络请求)
     addParams (id, attrName, attrSel, attrVals = '') {
       addParams(id, attrName, attrSel, attrVals)
+        .then(res => {
+          console.log(res)
+          if (res.data.meta.status !== 201) { return this.$message.error(res.data.meta.msg) }
+          this.$message.success(res.data.meta.msg)
+          this.getAttributesById(id, attrSel)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    // 修改动态参数或者静态属性(网络请求)
+    editParams (id, attrId, attrName, attrSel, attrVals = '') {
+      editParams(id, attrName, attrSel, attrVals)
         .then(res => {
           console.log(res)
           if (res.data.meta.status !== 201) { return this.$message.error(res.data.meta.msg) }
