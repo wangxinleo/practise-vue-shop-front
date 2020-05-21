@@ -2,7 +2,7 @@
  * @Author: wangxin.leo
  * @Date: 2020-05-21 11:35:25
  * @Last Modified by: wangxin.leo
- * @Last Modified time: 2020-05-21 16:18:04
+ * @Last Modified time: 2020-05-21 20:17:57
  */
 <template>
   <div class="params">
@@ -220,13 +220,20 @@ export default {
     // tag标签展示input标签
     showInput (row) {
       row.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
     },
     // input标签提交
     handleInputConfirm (row) {
-      const inputValue = row.inputValue
-      if (inputValue) {
-        this.row.attr_vals.push(inputValue)
+      // 校验输入是否有效
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+        return
       }
+      // 如果没有return ，做后续处理
+      row.attr_vals.push(row.inputValue.trim())
       row.inputVisible = false
       row.inputValue = ''
     },
