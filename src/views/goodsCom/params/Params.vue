@@ -2,7 +2,7 @@
  * @Author: wangxin.leo
  * @Date: 2020-05-21 11:35:25
  * @Last Modified by: wangxin.leo
- * @Last Modified time: 2020-05-21 20:17:57
+ * @Last Modified time: 2020-05-21 23:00:40
  */
 <template>
   <div class="params">
@@ -234,6 +234,7 @@ export default {
       }
       // 如果没有return ，做后续处理
       row.attr_vals.push(row.inputValue.trim())
+      // TODO:更新修改后的数据到数据库
       row.inputVisible = false
       row.inputValue = ''
     },
