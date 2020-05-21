@@ -43,3 +43,10 @@ export function editParams (id, attrId, attrName, attrSel, attrVals) {
     }
   })
 }
+
+export function deleteByAttrId (id, attrId) {
+  return request({
+    url: 'categories/' + id + '/attributes/' + attrId,
+    method: 'delete'
+  })
+}
