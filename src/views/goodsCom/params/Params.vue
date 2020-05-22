@@ -2,7 +2,7 @@
  * @Author: wangxin.leo
  * @Date: 2020-05-21 11:35:25
  * @Last Modified by: wangxin.leo
- * @Last Modified time: 2020-05-22 14:16:50
+ * @Last Modified time: 2020-05-22 14:43:28
  */
 <template>
   <div class="params">
@@ -51,7 +51,6 @@
                   <el-button v-else size="small" @click="showInput(scope.row)">+
                     New Tag
                   </el-button>
-                  <div>{{ scope.row }}</div>
                 </template>
               </el-table-column>
               <el-table-column type="index" label="#"></el-table-column>
@@ -95,7 +94,6 @@
                   <el-button v-else size="small" @click="showInput(scope.row)">+
                     New Tag
                   </el-button>
-                  <div>{{ scope.row }}</div>
                 </template>
               </el-table-column>
               <el-table-column type="index" label="#"></el-table-column>
@@ -229,8 +227,16 @@ export default {
     },
     // 删除tag标签
     handleClose (i, row) {
-      row.attr_vals.splice(i, 1)
-      this.funcAddChangeTag(row)
+      this.$confirm('此操作将永久删除该参数,是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        row.attr_vals.splice(i, 1)
+        this.funcAddChangeTag(row)
+      }).catch(err => {
+        console.log(err)
+      })
     },
     // tag标签展示input标签
     showInput (row) {
@@ -389,27 +395,26 @@ export default {
       const id = this.selectKeys[this.selectKeys.length - 1]
       const attrId = row.attr_id
       const attrSel = this.activeName === 'dynamic' ? 'many' : 'only'
-      deleteByAttrId(id, attrId).then(res => {
-        console.log(res)
-        // 弹窗确认
-        this.$confirm('此操作将永久删除该参数, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          // 确定
+      // 弹窗确认
+      this.$confirm('此操作将永久删除该参数, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 确定
+        deleteByAttrId(id, attrId).then(res => {
           if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
           this.$message.success(res.data.meta.msg)
           this.getAttributesById(id, attrSel)
-        }).catch(() => {
-          // 取消
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+        }).catch(err => {
+          console.log(err)
         })
-      }).catch(err => {
-        console.log(err)
+      }).catch(() => {
+        // 取消
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }
