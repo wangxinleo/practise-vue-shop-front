@@ -2,7 +2,7 @@
  * @Author: wangxin.leo
  * @Date: 2020-05-21 11:35:25
  * @Last Modified by: wangxin.leo
- * @Last Modified time: 2020-05-21 23:00:40
+ * @Last Modified time: 2020-05-22 14:16:50
  */
 <template>
   <div class="params">
@@ -39,7 +39,7 @@
                 <template slot-scope="scope">
                   <el-tag :key="i" v-for="(tag, i) in scope.row.attr_vals"
                     closable :disable-transitions="false"
-                    @close="handleClose(tag)">
+                    @close="handleClose(i, scope.row)">
                     {{ tag }}
                   </el-tag>
                   <el-input v-if="scope.row.inputVisible" class="inputTag"
@@ -81,7 +81,21 @@
             <el-table :data="dynamicData" border stripe>
               <el-table-column type="expand">
                 <template slot-scope="scope">
-                  {{ scope.row }}
+                  <el-tag :key="i" v-for="(tag, i) in scope.row.attr_vals"
+                    closable :disable-transitions="false"
+                    @close="handleClose(i, scope.row)">
+                    {{ tag }}
+                  </el-tag>
+                  <el-input v-if="scope.row.inputVisible" class="inputTag"
+                    v-model="scope.row.inputValue" ref="saveTagInput"
+                    size="small"
+                    @keyup.enter.native="handleInputConfirm(scope.row)"
+                    @blur="handleInputConfirm(scope.row)">
+                  </el-input>
+                  <el-button v-else size="small" @click="showInput(scope.row)">+
+                    New Tag
+                  </el-button>
+                  <div>{{ scope.row }}</div>
                 </template>
               </el-table-column>
               <el-table-column type="index" label="#"></el-table-column>
@@ -214,8 +228,9 @@ export default {
       this.getAttributesById(id, sel)
     },
     // 删除tag标签
-    handleClose (tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+    handleClose (i, row) {
+      row.attr_vals.splice(i, 1)
+      this.funcAddChangeTag(row)
     },
     // tag标签展示input标签
     showInput (row) {
@@ -234,7 +249,14 @@ export default {
       }
       // 如果没有return ，做后续处理
       row.attr_vals.push(row.inputValue.trim())
-      // TODO:更新修改后的数据到数据库
+      this.funcAddChangeTag(row)
+    },
+    // 添加删除参数tag标签,更新修改后的数据到数据库
+    funcAddChangeTag (row) {
+      // 更新修改后的数据到数据库
+      const id = this.selectKeys[this.selectKeys.length - 1]
+      const attrVals = row.attr_vals.join(' ')
+      this.editParams(id, row.attr_id, row.attr_name, row.attr_sel, attrVals)
       row.inputVisible = false
       row.inputValue = ''
     },
@@ -353,8 +375,10 @@ export default {
             return this.$message.error(res.data.meta.msg)
           }
           this.$message.success(res.data.meta.msg)
-          // 更新分区
-          this.getAttributesById(id, attrSel)
+          // 不修改具体参数值则不刷新表单
+          if (attrVals === '') {
+            this.getAttributesById(id, attrSel)
+          }
         })
         .catch(err => {
           console.log(err)
