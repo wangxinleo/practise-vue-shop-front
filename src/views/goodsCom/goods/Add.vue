@@ -22,13 +22,21 @@
         <el-step title="商品内容"></el-step>
         <el-step title="完成"></el-step>
       </el-steps>
-      <el-tabs tab-position="left" v-model="activeIndex" style="height: 200px;">
-        <el-tab-pane label="基本信息" name="0">基本信息</el-tab-pane>
-        <el-tab-pane label="商品参数" name="1">商品参数</el-tab-pane>
-        <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
-        <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
-        <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
-      </el-tabs>
+      <el-form ref="addGoodFormRef" :rules="addGoodRules" :model="addGoodForm"
+        label-position="top" label-width="100px">
+        <el-tabs tab-position="left" v-model="activeIndex"
+          style="height: 200px;">
+          <el-tab-pane label="基本信息" name="0">
+            <el-form-item label="活动名称">
+              <el-input v-model="addGoodForm.name"></el-input>
+            </el-form-item>
+          </el-tab-pane>
+          <el-tab-pane label="商品参数" name="1">商品参数</el-tab-pane>
+          <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
+          <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
+          <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
+        </el-tabs>
+      </el-form>
     </el-card>
   </div>
 </template>
@@ -40,7 +48,11 @@ export default {
   components: {},
   data () {
     return {
-      activeIndex: '0'
+      activeIndex: '0',
+      addGoodForm: {
+        name: ''
+      },
+      addGoodRules: []
     }
   },
   computed: {},
