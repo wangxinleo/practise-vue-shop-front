@@ -41,15 +41,36 @@
               <el-input v-model="addGoodForm.goods_weight"></el-input>
             </el-form-item>
             <el-form-item label="商品分类">
+              <!-- 级联选择器 -->
               <el-cascader v-model="addGoodForm.goods_cat"
                 :options="categoriesData" :props="categoriesProps"
                 @change="handleChange" clearable>
               </el-cascader>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品参数" name="1">商品参数</el-tab-pane>
-          <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
-          <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
+          <el-tab-pane label="商品参数" name="1">
+            <el-form-item :label="item.attr_name" v-for="item in manyTableData"
+              :key="item.attr_id">
+              <!-- 多选框 -->
+              <el-checkbox-group v-model="item.attr_vals">
+                <el-checkbox :label="name" v-for="(name,i) in item.attr_vals"
+                  :key="i" border></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-tab-pane>
+          <el-tab-pane label="商品属性" name="2">
+            <el-form-item :label="item.attr_name" v-for="item in onlyTableData"
+              :key="item.attr_id">
+              <el-input v-model="item.attr_vals"></el-input>
+            </el-form-item>
+          </el-tab-pane>
+          <el-tab-pane label="商品图片" name="3">
+            <el-upload :action="uploadURL" :on-preview="handlePreview"
+              :on-remove="handleRemove" list-type="picture">
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+          </el-tab-pane>
           <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
         </el-tabs>
       </el-form>
@@ -97,7 +118,12 @@ export default {
         children: 'children'
       },
       // 动态数据列表
-      manyTableData: []
+      manyTableData: [],
+      // 静态属性列表
+      onlyTableData: [],
+      // 图片上传url
+      uploadURL: 'http://timemeetyou.com:8889/api/private/v1/upload'
+
     }
   },
   computed: {
@@ -111,11 +137,21 @@ export default {
   // 监控data中的数据变化
   watch: {},
   methods: {
+    // 删除图片
+    handleRemove () {
+
+    },
+    // 图片预览
+    handlePreview () {
+
+    },
     // 点击标签页
     tabClick () {
       console.log(this.activeIndex)
       if (this.activeIndex === '1') {
         this.getAttributesById(this.cateId, 'many')
+      } else if (this.activeIndex === '2') {
+        this.getAttributesById(this.cateId, 'only')
       }
     },
     // 标签页切换前
@@ -143,7 +179,14 @@ export default {
     getAttributesById (id, sel) {
       getAttributesById(id, sel).then(res => {
         if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
-        this.manyTableData = res.data.data
+        // 动态参数值转为数值
+        if (res.data.data.length > 0 && sel === 'many') {
+          res.data.data.forEach(item => {
+            item.attr_vals = item.attr_vals.length === 0 ? [] : item.attr_vals.split(',')
+          })
+        }
+        // 按需渲染
+        sel === 'only' ? this.onlyTableData = res.data.data : this.manyTableData = res.data.data
       }).catch(err => {
         console.log(err)
       })
@@ -173,5 +216,8 @@ export default {
 }
 .el-cascader {
   width: 50%;
+}
+.el-checkbox {
+  margin: 0 10px 0 0 !important;
 }
 </style>
