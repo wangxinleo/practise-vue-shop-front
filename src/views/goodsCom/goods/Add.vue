@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <div class='goodsAdd'>
+  <div class="goodsAdd">
     <!--    面包屑导航-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
@@ -53,7 +53,7 @@
               :key="item.attr_id">
               <!-- 多选框 -->
               <el-checkbox-group v-model="item.attr_vals">
-                <el-checkbox :label="name" v-for="(name,i) in item.attr_vals"
+                <el-checkbox :label="name" v-for="(name, i) in item.attr_vals"
                   :key="i" border></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
@@ -66,21 +66,31 @@
           </el-tab-pane>
           <el-tab-pane label="商品图片" name="3">
             <el-upload :action="uploadURL" :on-preview="handlePreview"
-              :on-remove="handleRemove" list-type="picture">
+              :on-remove="handleRemove" list-type="picture"
+              :headers="headersOBJ" :on-success="handleSuccess">
               <el-button size="small" type="primary">点击上传</el-button>
               <div slot="tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
           </el-tab-pane>
-          <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
+          <el-tab-pane label="商品内容" name="4">
+            <quill-editor v-model="addGoodForm.goods_introduce"></quill-editor>
+            <el-button type="primary" class="addBtn" @click="submitAdd">添加商品
+            </el-button>
+          </el-tab-pane>
         </el-tabs>
       </el-form>
     </el-card>
+    <!-- 图片预览框 -->
+    <el-dialog title="图片预览" :visible.sync="previewVisible" width="50%">
+      <img :src="previewPath" alt="" class="imgWidth" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getCategories } from 'network/goodsCom/Categories'
 import { getAttributesById } from 'network/goodsCom/Params'
+import { addGood } from 'network/goodsCom/Goods'
 export default {
   name: 'GoodsAdd',
   components: {},
@@ -94,7 +104,9 @@ export default {
         goods_number: 0,
         goods_weight: 0,
         goods_cat: [],
-        attrs: []
+        goods_introduce: '',
+        attrs: [],
+        pics: []
       },
       addGoodRules: {
         goods_name: [
@@ -122,8 +134,14 @@ export default {
       // 静态属性列表
       onlyTableData: [],
       // 图片上传url
-      uploadURL: 'http://timemeetyou.com:8889/api/private/v1/upload'
-
+      uploadURL: 'http://timemeetyou.com:8889/api/private/v1/upload',
+      // 图片上传请求头
+      headersOBJ: {
+        Authorization: window.sessionStorage.getItem('token')
+      },
+      // 预览图片URL
+      previewPath: '',
+      previewVisible: false
     }
   },
   computed: {
@@ -137,13 +155,45 @@ export default {
   // 监控data中的数据变化
   watch: {},
   methods: {
+    // 提交添加商品
+    submitAdd () {
+      this.$refs.addGoodFormRef.validate(validate => {
+        if (!validate) {
+          this.$message.error('请填写必要的信息项!')
+          return false
+        }
+        // const goodName = this.addGoodForm.goods_name
+        // const goodCat = this.addGoodForm.goods_cat.join(',')
+        // const goodPrice = this.addGoodForm.goods_price
+        // const goodNum = this.addGoodForm.goods_number
+        // const goodWeight = this.addGoodForm.goods_weight
+        // const goodIntroduce = this.addGoodForm.goods_introduce
+        // const pics = this.addGoodForm.pics
+        // TODO:拼接attrs参数
+        // const attrs =
+      })
+    },
     // 删除图片
-    handleRemove () {
-
+    handleRemove (file) {
+      // 获取文件临时路径
+      const filePath = file.response.data.tmp_path
+      // 找到对应索引值
+      const i = this.addGoodForm.pics.findIndex(x => x.pics === filePath)
+      // 利用splice函数删除对应记录
+      this.addGoodForm.pics.splice(i, 1)
     },
     // 图片预览
-    handlePreview () {
-
+    handlePreview (file) {
+      console.log(file)
+      this.previewPath = file.response.data.url
+      this.previewVisible = true
+    },
+    // 图片上传成功钩子
+    handleSuccess (res) {
+      // 拼接路径对象
+      const temp = { pic: res.data.tmp_path }
+      // push进到数组
+      this.addGoodForm.pics.push(temp)
     },
     // 点击标签页
     tabClick () {
@@ -167,26 +217,41 @@ export default {
     },
     // 获取商品分类数据
     getCategories (type = '', pageNum = '', pageSize = '') {
-      getCategories(type, pageNum, pageSize).then(res => {
-        if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
-        this.$message.success(res.data.meta.msg)
-        this.categoriesData = res.data.data
-      }).catch(err => {
-        console.log(err)
-      })
+      getCategories(type, pageNum, pageSize)
+        .then(res => {
+          if (res.data.meta.status !== 200) { return this.$message.error(res.data.meta.msg) }
+          this.$message.success(res.data.meta.msg)
+          this.categoriesData = res.data.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     // 获取参数数据
     getAttributesById (id, sel) {
-      getAttributesById(id, sel).then(res => {
-        if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
-        // 动态参数值转为数值
-        if (res.data.data.length > 0 && sel === 'many') {
-          res.data.data.forEach(item => {
-            item.attr_vals = item.attr_vals.length === 0 ? [] : item.attr_vals.split(',')
-          })
-        }
-        // 按需渲染
-        sel === 'only' ? this.onlyTableData = res.data.data : this.manyTableData = res.data.data
+      getAttributesById(id, sel)
+        .then(res => {
+          if (res.data.meta.status !== 200) { return this.$message.error(res.data.meta.msg) }
+          // 动态参数值转为数值
+          if (res.data.data.length > 0 && sel === 'many') {
+            res.data.data.forEach(item => {
+              item.attr_vals =
+                item.attr_vals.length === 0 ? [] : item.attr_vals.split(',')
+            })
+          }
+          // 按需渲染
+          sel === 'only'
+            ? (this.onlyTableData = res.data.data)
+            : (this.manyTableData = res.data.data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    // 添加商品
+    addGood (goodName, goodCat, goodPrice, goodNum, goodWeight, goodIntroduce, pics, attrs) {
+      addGood(goodName, goodCat, goodPrice, goodNum, goodWeight, goodIntroduce, pics, attrs).then(res => {
+        console.log(res)
       }).catch(err => {
         console.log(err)
       })
@@ -197,9 +262,7 @@ export default {
     this.getCategories()
   },
   // 生命周期 - 挂载完成（可以访问DOM元素）
-  mounted () {
-
-  },
+  mounted () { },
   beforeCreate () { }, // 生命周期 - 创建之前
   beforeMount () { }, // 生命周期 - 挂载之前
   beforeUpdate () { }, // 生命周期 - 更新之前
@@ -219,5 +282,11 @@ export default {
 }
 .el-checkbox {
   margin: 0 10px 0 0 !important;
+}
+.imgWidth {
+  width: 100%;
+}
+.addBtn {
+  margin-top: 10px;
 }
 </style>

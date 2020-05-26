@@ -29,3 +29,6 @@ body,
 .el-step__title {
   font-size: 13px !important;
 }
+.ql-editor {
+  height: 300px;
+}
