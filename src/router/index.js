@@ -12,6 +12,7 @@ const Params = () => import('../views/goodsCom/params/Params')
 const Categories = () => import('../views/goodsCom/categories/Categories')
 const Add = () => import('../views/goodsCom/goods/Add')
 const Order = () => import('../views/order/Order')
+const Report = () => import('../views/report/Report')
 
 Vue.use(VueRouter)
 
@@ -75,6 +76,11 @@ const routes = [
         path: '/orders',
         name: 'order',
         component: Order
+      },
+      {
+        path: '/reports',
+        name: 'report',
+        component: Report
       }
     ]
   }
