@@ -91,6 +91,8 @@
 import { getCategories } from 'network/goodsCom/Categories'
 import { getAttributesById } from 'network/goodsCom/Params'
 import { addGood } from 'network/goodsCom/Goods'
+
+import _ from 'lodash'
 export default {
   name: 'GoodsAdd',
   components: {},
@@ -162,15 +164,28 @@ export default {
           this.$message.error('请填写必要的信息项!')
           return false
         }
-        // const goodName = this.addGoodForm.goods_name
-        // const goodCat = this.addGoodForm.goods_cat.join(',')
-        // const goodPrice = this.addGoodForm.goods_price
-        // const goodNum = this.addGoodForm.goods_number
-        // const goodWeight = this.addGoodForm.goods_weight
-        // const goodIntroduce = this.addGoodForm.goods_introduce
-        // const pics = this.addGoodForm.pics
-        // TODO:拼接attrs参数
-        // const attrs =
+        // 深拷贝form表单数据
+        const form = _.cloneDeep(this.addGoodForm)
+        form.goods_cat = form.goods_cat.join(',')
+        // 拼接动态参数
+        this.manyTableData.forEach(item => {
+          const newAttr = {
+            attr_id: item.attr_id,
+            attr_value: item.attr_vals.join(' ')
+          }
+          form.attrs.push(newAttr)
+        })
+        // 拼接静态属性
+        this.onlyTableData.forEach(item => {
+          const newAttr = {
+            attr_id: item.attr_id,
+            attr_value: item.attr_vals
+          }
+          form.attrs.push(newAttr)
+        })
+        console.log(form)
+        // 执行上传
+        this.addGood(form)
       })
     },
     // 删除图片
@@ -249,9 +264,12 @@ export default {
         })
     },
     // 添加商品
-    addGood (goodName, goodCat, goodPrice, goodNum, goodWeight, goodIntroduce, pics, attrs) {
-      addGood(goodName, goodCat, goodPrice, goodNum, goodWeight, goodIntroduce, pics, attrs).then(res => {
+    addGood (form) {
+      addGood(form).then(res => {
         console.log(res)
+        if (res.data.meta.status !== 201) { return this.$message.error(res.data.meta.msg) }
+        this.$message.success(res.data.meta.msg)
+        this.$router.push('/goods')
       }).catch(err => {
         console.log(err)
       })
