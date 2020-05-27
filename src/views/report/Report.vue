@@ -2,7 +2,7 @@
  * @Author: wangxin.leo
  * @Date: 2020-05-27 14:58:30
  * @Last Modified by: wangxin.leo
- * @Last Modified time: 2020-05-27 16:19:20
+ * @Last Modified time: 2020-05-27 16:32:37
  */
 <!-- Report.vue -->
 <template>
@@ -71,9 +71,11 @@ export default {
     getMap () {
       getMap().then(res => {
         if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
-        // 绘制
+        // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main'))
+        // 合并配置项和数据
         const result = _.merge(res.data.data, this.oldOption)
+        // // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(result)
       }).catch(err => {
         console.log(err)
