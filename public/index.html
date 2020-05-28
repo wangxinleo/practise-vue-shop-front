@@ -6,7 +6,28 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
-  <title><%= htmlWebpackPlugin.options.title %></title>
+  <title><%= htmlWebpackPlugin.options.isProd ? '' : 'dev - ' %>后台管理系统</title>
+  <% if(htmlWebpackPlugin.options.isProd) {%>
+  <!-- NPROGRESS -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css">
+  <!-- QUILL -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/quill/2.0.0-dev.4/quill.core.min.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/quill/2.0.0-dev.4/quill.snow.min.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/quill/2.0.0-dev.4/quill.bubble.min.css">
+  <!-- element -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/element-ui/2.13.2/theme-chalk/index.css">
+  <script src="https://cdn.staticfile.org/vue/2.6.11/vue.min.js"></script>
+  <script src="https://cdn.staticfile.org/vue-router/4.0.0-alpha.12/vue-router.esm.js"></script>
+  <script src="https://cdn.staticfile.org/axios/0.19.2/axios.min.js"></script>
+  <script src="https://cdn.staticfile.org/lodash.js/4.17.15/lodash.min.js"></script>
+  <script src="https://cdn.staticfile.org/echarts/4.8.0/echarts.min.js"></script>
+  <script src="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js"></script>
+  <!-- 富文本编辑器 -->
+  <script src="https://cdn.staticfile.org/quill/2.0.0-dev.4/quill.min.js"></script>
+  <script src="https://cdn.staticfile.org/quill/2.0.0-dev.4/quill.core.min.js"></script>
+
+  <script src="https://cdn.staticfile.org/element-ui/2.13.2/index.js"></script>
+  <% } %>
 </head>
 
 <body>
