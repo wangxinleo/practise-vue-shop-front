@@ -1,5 +1,6 @@
 import axios from 'axios'
 // 引入nprogress
+// 进度条插件
 import NProgress from 'nprogress'
 
 export function request (config) {
@@ -9,6 +10,7 @@ export function request (config) {
   })
 
   instance.interceptors.request.use((config) => {
+    // 请求开始，开始进度条
     NProgress.start()
     // 添加验证请求头
     config.headers.Authorization = window.sessionStorage.getItem('token')
@@ -18,6 +20,7 @@ export function request (config) {
   })
 
   instance.interceptors.response.use((config) => {
+    // 请求结束，关闭进度条
     NProgress.done()
     return config
   }, error => {
