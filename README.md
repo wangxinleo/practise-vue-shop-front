@@ -12,6 +12,8 @@
 <br/>
 API 接口文档：链接：[https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ](https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ) 提取码：mgbr
 <br/>
+全套课程下载：链接：[https://pan.baidu.com/s/1\_-Ve1ceCsvPuXDtieeyVEA](https://pan.baidu.com/s/1_-Ve1ceCsvPuXDtieeyVEA) ，提取码是 q8ln
+<br/>
 _注：后端接口地址必须带有 token 才能正常发送和接收请求，请跟着项目课程了解学习_
 
 > 请不要乱删数据，删了请加回去，删的时候请留个一两条在列表里。特别是角色权限部分，删光了权限数据那做到这部分的同学就没法继续做下去了
