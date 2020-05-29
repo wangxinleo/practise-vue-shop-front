@@ -3,11 +3,19 @@
 ## 介绍
 
 跟着[2019 黑马前端 element 课程](https://www.bilibili.com/video/BV1EE411B7SU?from=search&seid=17690394498499497084)学习的代码项目。
+
+> 在食用本项目前，推荐先学习vue.js，这个东西是element UI 框架的学习门槛。**切勿急功近利**
+
+<br/>
+
+**前端 web 项目索引：[learnVue_shop 配套的服务器 API 项目](https://github.com/wangxinleo/vueShop_Server.git)**
+
 <br/>
 本项目使用的后台 API 接口是 [洛天依保护协会](https://space.bilibili.com/132108522?spm_id_from=333.788.b_636f6d6d656e74.26)提供的公用后台 API 接口
 <br/>
 黑马前端官方课程地址：
 前端项目地址：[http://shop.liulongbin.top/](http://shop.liulongbin.top/)
+<br/>
 后端接口地址：[https://www.liulongbin.top:8888/api/private/v1/](https://www.liulongbin.top:8888/api/private/v1/)
 <br/>
 API 接口文档：链接：[https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ](https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ) 提取码：mgbr
@@ -239,6 +247,9 @@ methods: {
 ```
 
 - 其他插件
+
   [Import Cost] 查看你引入的依赖模块大小
+  <br/>
   [Auto Close Tag] 自动补全 html 标签，如输入`<a>`将自动补全`</a>`
+  <br/>
   [Auto Rename Tag] 自动重命名 html 标签，如修改`<a>`为`<b>`，将自动修改结尾标签`</a>`为`</b>`
