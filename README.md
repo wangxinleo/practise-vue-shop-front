@@ -3,12 +3,13 @@
 ## 介绍
 
 跟着[2019 黑马前端 element 课程](https://www.bilibili.com/video/BV1EE411B7SU?from=search&seid=17690394498499497084)学习的代码项目。
+<br/>
 本项目使用的后台 API 接口是 [洛天依保护协会](https://space.bilibili.com/132108522?spm_id_from=333.788.b_636f6d6d656e74.26)提供的公用后台 API 接口
-
+<br/>
 黑马前端官方课程地址：
 前端项目地址：[http://shop.liulongbin.top/](http://shop.liulongbin.top/)
 后端接口地址：[https://www.liulongbin.top:8888/api/private/v1/](https://www.liulongbin.top:8888/api/private/v1/)
-
+<br/>
 _注：后端接口地址必须带有 token 才能正常发送和接收请求，请跟着项目课程了解学习_
 
 > 请不要乱删数据，删了请加回去，删的时候请留个一两条在列表里。特别是角色权限部分，删光了权限数据那做到这部分的同学就没法继续做下去了
@@ -17,8 +18,11 @@ _注：后端接口地址必须带有 token 才能正常发送和接收请求，
 ### 鸣谢
 
 b 站用户 : [洛天依保护协会](https://space.bilibili.com/132108522?spm_id_from=333.788.b_636f6d6d656e74.26)提供的公用后台 API 接口
+<br/>
 用户名 : admin 密码 : 123456
+<br/>
 [洛天依保护协会](https://space.bilibili.com/132108522?spm_id_from=333.788.b_636f6d6d656e74.26)的项目示例地址 : [http://gl.timemeetyou.com](http://gl.timemeetyou.com)
+<br/>
 **万一接口失效了或者用户被删了可以私聊其恢复数据库**
 
 ### 安装
@@ -215,6 +219,7 @@ methods: {
 ```
 
 - stylelint
+  <br/>
   > 这个工具会自动格式化整理 CSS、sass、less 代码，自动排序 css 的顺序
   > vscode 需要去插件商店下载【stylelint-plus】这个插件
   > 具体的 JSON 配置如下
