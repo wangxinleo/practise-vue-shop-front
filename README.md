@@ -10,6 +10,8 @@
 前端项目地址：[http://shop.liulongbin.top/](http://shop.liulongbin.top/)
 后端接口地址：[https://www.liulongbin.top:8888/api/private/v1/](https://www.liulongbin.top:8888/api/private/v1/)
 <br/>
+API 接口文档：链接：[https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ](https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ) 提取码：mgbr
+<br/>
 _注：后端接口地址必须带有 token 才能正常发送和接收请求，请跟着项目课程了解学习_
 
 > 请不要乱删数据，删了请加回去，删的时候请留个一两条在列表里。特别是角色权限部分，删光了权限数据那做到这部分的同学就没法继续做下去了
