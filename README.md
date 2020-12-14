@@ -26,7 +26,7 @@
 
 API 接口文档：链接：[https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ](https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ) 提取码：mgbr
 
-全套课程下载：链接：[https://pan.baidu.com/s/1\_-Ve1ceCsvPuXDtieeyVEA](https://pan.baidu.com/s/1_-Ve1ceCsvPuXDtieeyVEA) ，提取码是 q8ln
+全套课程下载：链接：[https://pan.baidu.com/s/1gA2oIe2Fk97iJ1E6mYmfEw](https://pan.baidu.com/s/1gA2oIe2Fk97iJ1E6mYmfEw) 提取码：pjg3 
 
 
 
