@@ -26,9 +26,7 @@
 
 API 接口文档：链接：[https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ](https://pan.baidu.com/s/1KJPfaFaPadW4JdGjCt54NQ) 提取码：mgbr
 
-全套课程下载：链接：[https://pan.baidu.com/s/1gA2oIe2Fk97iJ1E6mYmfEw](https://pan.baidu.com/s/1gA2oIe2Fk97iJ1E6mYmfEw) 提取码：pjg3 
-
-
+全套课程下载：链接：[https://pan.baidu.com/s/1hBwZLR-Wbjt28YSEzVi6AQ](https://pan.baidu.com/s/1hBwZLR-Wbjt28YSEzVi6AQ) 提取码：2urn 
 
 
 _注：后端接口地址必须带有 token 才能正常发送和接收请求，请跟着项目课程了解学习_
