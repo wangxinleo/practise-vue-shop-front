@@ -1,4 +1,4 @@
-# vue_shop
+# practise-vue-shop-front
 
 ## 介绍
 
